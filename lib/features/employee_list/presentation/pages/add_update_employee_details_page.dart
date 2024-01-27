@@ -227,219 +227,301 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
 
   void showCalendarPopup(BuildContext context) {
     DateTime selectedDate = DateTime.now();
+    DateTime focusedDate = DateTime.now();
 
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
           child: StatefulBuilder(
             builder: (context, setState) {
               return Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Column(
                   mainAxisSize: MainAxisSize
                       .min, // To make the dialog as big as its children
                   children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          height: 36,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: 36,
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      foregroundColor:
-                                          AppColors.onSecondaryColor,
-                                      textStyle: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        height: 20 / 14,
+                    // Custom 4 actions
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 36,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 36,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Theme.of(context)
+                                            .secondaryHeaderColor,
+                                        foregroundColor:
+                                            AppColors.onSecondaryColor,
+                                        textStyle: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          height: 20 / 14,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          selectedDate = DateTime.now();
+                                        });
+                                      },
+                                      child: const Text(
+                                        'Today',
                                       ),
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedDate = DateTime.now();
-                                      });
-                                    },
-                                    child: const Text(
-                                      'Today',
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 36,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        foregroundColor:
+                                            AppColors.onPrimaryColor,
+                                      ),
+                                      onPressed: () {
+                                        DateTime nextMonday = getNextMonday();
+                                        // if (nextMonday.isAfter(DateTime.now())) {
+                                        setState(() {
+                                          selectedDate = nextMonday;
+                                        });
+                                        // }
+                                      },
+                                      child: const Text(
+                                        'Next Monday',
+                                      ),
                                     ),
                                   ),
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 36,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 36,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Theme.of(context)
+                                            .secondaryHeaderColor,
+                                        foregroundColor:
+                                            AppColors.onSecondaryColor,
+                                        textStyle: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          height: 20 / 14,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        DateTime nextTuesday = getNextTuesday();
+                                        setState(() {
+                                          selectedDate = nextTuesday;
+                                        });
+                                      },
+                                      child: const Text(
+                                        'Next Tuesday',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 36,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Theme.of(context)
+                                            .secondaryHeaderColor,
+                                        foregroundColor:
+                                            AppColors.onSecondaryColor,
+                                        textStyle: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          height: 20 / 14,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        DateTime nextWeek = getNextWeek();
+                                        setState(() {
+                                          selectedDate = nextWeek;
+                                        });
+                                      },
+                                      child: const Text(
+                                        'After 1 week',
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    // Main calendar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TableCalendar(
+                        selectedDayPredicate: (day) {
+                          // Compare the selected day with the current day
+                          return isSameDay(selectedDate, day);
+                        },
+                        calendarBuilders: CalendarBuilders(
+                          // To hide previous and next month dates
+                          outsideBuilder: (context, date, _) =>
+                              const SizedBox.shrink(),
+                          // Today date style
+                          todayBuilder: (context, date, _) => Container(
+                            margin: const EdgeInsets.all(4.0),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.fromBorderSide(
+                                BorderSide(
+                                  color: Colors.blue,
+                                  width: 1,
                                 ),
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: SizedBox(
-                                  height: 36,
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      foregroundColor: AppColors.onPrimaryColor,
-                                    ),
-                                    onPressed: () {
-                                      DateTime nextMonday = getNextMonday();
-                                      // if (nextMonday.isAfter(DateTime.now())) {
-                                      setState(() {
-                                        selectedDate = nextMonday;
-                                      });
-                                      // }
-                                    },
-                                    child: const Text(
-                                      'Next Monday',
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              date.day.toString(),
+                              style: const TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                          // Selected date style
+                          selectedBuilder: (context, date, _) => Container(
+                            margin: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              date.day.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height: 36,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: 36,
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      foregroundColor:
-                                          AppColors.onSecondaryColor,
-                                      textStyle: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        height: 20 / 14,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      DateTime nextTuesday = getNextTuesday();
-                                      setState(() {
-                                        selectedDate = nextTuesday;
-                                      });
-                                    },
-                                    child: const Text(
-                                      'Next Tuesday',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: SizedBox(
-                                  height: 36,
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      foregroundColor:
-                                          AppColors.onSecondaryColor,
-                                      textStyle: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        height: 20 / 14,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      DateTime nextWeek = getNextWeek();
-                                      setState(() {
-                                        selectedDate = nextWeek;
-                                      });
-                                    },
-                                    child: const Text(
-                                      'After 1 week',
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    TableCalendar(
-                      firstDay: DateTime.utc(2010, 10, 16),
-                      // lastDay: DateTime
-                      //     .now(), // Set the last day to the current date
-                      lastDay: DateTime.utc(2030, 10, 16),
-                      focusedDay: selectedDate,
-                      headerStyle: HeaderStyle(
-                        formatButtonVisible: false,
-                        titleCentered: true,
-                        titleTextStyle: AppTextStyles.calendarTitle,
-                        leftChevronIcon:
-                            Image.asset(AppAssets.previousMonthIcon),
-                        rightChevronIcon: Image.asset(AppAssets.nextMonthIcon),
+
+                        firstDay: DateTime.utc(2010, 10, 16),
+                        // lastDay: DateTime
+                        //     .now(), // Set the last day to the current date
+                        lastDay: DateTime.utc(2030, 10, 16),
+                        focusedDay: focusedDate,
+                        // Left right chevron icons with current month name
+                        headerStyle: HeaderStyle(
+                          formatButtonVisible: false,
+                          titleCentered: true,
+                          titleTextStyle: AppTextStyles.calendarTitle,
+                          leftChevronIcon:
+                              Image.asset(AppAssets.previousMonthIcon),
+                          rightChevronIcon:
+                              Image.asset(AppAssets.nextMonthIcon),
+                          leftChevronMargin: const EdgeInsets.only(left: 32),
+                          rightChevronMargin: const EdgeInsets.only(right: 32),
+                        ),
+                        onDaySelected: (selectedDay, focusedDay) {
+                          // if (selectedDay.isAfter(DateTime.now())) {
+                          //   // Do not allow the selection of a future date
+                          //   return;
+                          // }
+                          setState(() {
+                            selectedDate = selectedDay;
+                            focusedDate = focusedDay; // Add this line
+                          });
+                        },
                       ),
-                      onDaySelected: (selectedDay, focusedDay) {
-                        if (selectedDay.isAfter(DateTime.now())) {
-                          // Do not allow the selection of a future date
-                          return;
-                        }
-                        setState(() {
-                          selectedDate = selectedDay;
-                        });
-                      },
                     ),
                     const Divider(
                       thickness: 1,
                       color: AppColors.dividerColor,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Image.asset(AppAssets.eventIcon),
-                        const SizedBox(
-                          width: 6,
-                        ),
-                        Text(
-                          DateFormat('dd MMM yyyy').format(selectedDate),
-                          style: AppTextStyles.selectedDateTextStyle,
-                        ),
-                        Expanded(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).secondaryHeaderColor,
-                              foregroundColor: AppColors.onSecondaryColor,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Cancel',
+                    // cancel and save buttons
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Image.asset(AppAssets.eventIcon),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Text(
+                            DateFormat('dd MMM yyyy').format(selectedDate),
+                            style: AppTextStyles.selectedDateTextStyle,
+                          ),
+                          Expanded(
+                            child: SizedBox(
+                              width: 73,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).secondaryHeaderColor,
+                                  foregroundColor: AppColors.onSecondaryColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    height: 20 / 14,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: AppColors.onPrimaryColor,
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: SizedBox(
+                              width: 73,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  foregroundColor: AppColors.onPrimaryColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    height: 20 / 14,
+                                  ),
+                                ),
+                              ),
                             ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Save',
-                            ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     )
                   ],
                 ),
