@@ -14,46 +14,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> currentEmployees = [
-      // {
-      //   'id': 1,
-      //   'name': 'John Doe',
-      //   'role': 'Software Developer',
-      //   'joiningDate': DateTime(2020, 1, 1),
-      //   'leavingDate': null, // still employed
-      // },
-      // {
-      //   'id': 2,
-      //   'name': 'Jane Smith',
-      //   'role': 'Product Manager',
-      //   'joiningDate': DateTime(2019, 5, 20),
-      //   'leavingDate': null, // still employed
-      // },
-      // {
-      //   'id': 3,
-      //   'name': 'Bob Johnson',
-      //   'role': 'UX Designer',
-      //   'joiningDate': DateTime(2021, 2, 15),
-      //   'leavingDate': null, // still employed
-      // },
-    ];
+    List<Map<String, dynamic>> currentEmployees = [];
 
-    List<Map<String, dynamic>> previousEmployees = [
-      // {
-      //   'id': 4,
-      //   'name': 'Alice Williams',
-      //   'role': 'Data Analyst',
-      //   'joiningDate': DateTime(2018, 7, 30),
-      //   'leavingDate': DateTime(2020, 12, 31),
-      // },
-      // {
-      //   'id': 5,
-      //   'name': 'Charlie Brown',
-      //   'role': 'Software Tester',
-      //   'joiningDate': DateTime(2017, 3, 15),
-      //   'leavingDate': DateTime(2021, 1, 1),
-      // },
-    ];
+    List<Map<String, dynamic>> previousEmployees = [];
 
     int itemCount = currentEmployees.length +
         previousEmployees.length +
@@ -73,6 +36,7 @@ class HomePage extends StatelessWidget {
         width: 50,
         height: 50,
         child: FloatingActionButton(
+          elevation: 0,
           backgroundColor: AppColors.primaryColor,
           foregroundColor: AppColors.onPrimaryColor,
           onPressed: () {

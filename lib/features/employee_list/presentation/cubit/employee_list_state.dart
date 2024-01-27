@@ -8,3 +8,23 @@ abstract class EmployeeListState extends Equatable {
 }
 
 class EmployeeListInitial extends EmployeeListState {}
+
+class EmployeeListLoading extends EmployeeListState {}
+
+class EmployeeListLoaded extends EmployeeListState {
+  final List<EmployeeDisplay> employees;
+
+  const EmployeeListLoaded(this.employees);
+
+  @override
+  List<Object> get props => [employees];
+}
+
+class EmployeeListError extends EmployeeListState {
+  final String message;
+
+  const EmployeeListError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
