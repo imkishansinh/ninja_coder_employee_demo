@@ -14,8 +14,46 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List currentEmployees = [1, 1, 1];
-    List previousEmployees = [];
+    List<Map<String, dynamic>> currentEmployees = [
+      // {
+      //   'id': 1,
+      //   'name': 'John Doe',
+      //   'role': 'Software Developer',
+      //   'joiningDate': DateTime(2020, 1, 1),
+      //   'leavingDate': null, // still employed
+      // },
+      // {
+      //   'id': 2,
+      //   'name': 'Jane Smith',
+      //   'role': 'Product Manager',
+      //   'joiningDate': DateTime(2019, 5, 20),
+      //   'leavingDate': null, // still employed
+      // },
+      // {
+      //   'id': 3,
+      //   'name': 'Bob Johnson',
+      //   'role': 'UX Designer',
+      //   'joiningDate': DateTime(2021, 2, 15),
+      //   'leavingDate': null, // still employed
+      // },
+    ];
+
+    List<Map<String, dynamic>> previousEmployees = [
+      // {
+      //   'id': 4,
+      //   'name': 'Alice Williams',
+      //   'role': 'Data Analyst',
+      //   'joiningDate': DateTime(2018, 7, 30),
+      //   'leavingDate': DateTime(2020, 12, 31),
+      // },
+      // {
+      //   'id': 5,
+      //   'name': 'Charlie Brown',
+      //   'role': 'Software Tester',
+      //   'joiningDate': DateTime(2017, 3, 15),
+      //   'leavingDate': DateTime(2021, 1, 1),
+      // },
+    ];
 
     int itemCount = currentEmployees.length +
         previousEmployees.length +
@@ -23,7 +61,7 @@ class HomePage extends StatelessWidget {
         (previousEmployees.isEmpty ? 0 : 1); // Add 1 for each non-empty list
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: AppColors.dividerColor,
       appBar: AppBar(
         elevation: 0,
         title: const Text(
@@ -31,26 +69,26 @@ class HomePage extends StatelessWidget {
           style: AppTextStyles.appBarTextStyle,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primaryColor,
-        foregroundColor: AppColors.onPrimaryColor,
-        onPressed: () {
-          Navigator.of(context).pushNamed(
-            AddUpdateEmpDetailsPage.routeName,
-          );
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(
-          //     content: Text('You tapped on plus icon'),
-          //   ),
-          // );
-        },
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8),
+      floatingActionButton: SizedBox(
+        width: 50,
+        height: 50,
+        child: FloatingActionButton(
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: AppColors.onPrimaryColor,
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              AddUpdateEmpDetailsPage.routeName,
+            );
+          },
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(8),
+            ),
           ),
-        ),
-        child: const Icon(
-          Icons.add,
+          child: const Icon(
+            Icons.add_rounded,
+            size: 18,
+          ),
         ),
       ),
       body: currentEmployees.isEmpty && previousEmployees.isEmpty
@@ -61,8 +99,13 @@ class HomePage extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 48),
-                  child: ListView.builder(
+                  child: ListView.separated(
                     itemCount: itemCount,
+                    separatorBuilder: (_, __) => const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: AppColors.dividerColor,
+                    ),
                     itemBuilder: (_, index) {
                       if (index == 0 && currentEmployees.isNotEmpty) {
                         return const EmpListItemHeader('Current Employees');
@@ -104,12 +147,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildEmployeeItem(int previousEmploye) {
+  Widget buildEmployeeItem(Map<String, dynamic> previousEmploye) {
     return EmpListItem(
-      title: 'title',
-      subTitle: 'subTitle',
+      title: previousEmploye['name'],
+      subTitle: previousEmploye['role'],
       desc: 'desc',
-      itemKey: '$previousEmploye',
+      itemKey: '${previousEmploye['id']}',
       onDismissed: (p0) {},
     );
   }

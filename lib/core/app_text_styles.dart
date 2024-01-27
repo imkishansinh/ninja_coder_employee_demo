@@ -55,6 +55,7 @@ class AppTextStyles {
     fontFamily: 'Roboto',
     fontSize: 18,
     fontWeight: FontWeight.w500,
+    color: AppColors.listTileTitleColor,
     height: 21 / 18,
   );
 
@@ -64,5 +65,13 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     color: AppColors.textFieldTextColor,
     height: 20 / 16,
+  );
+
+  static const TextStyle calendarDateText = TextStyle(
+    fontFamily: "Roboto",
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textFieldTextColor,
+    height: 20 / 15,
   );
 }

@@ -240,7 +240,7 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
           child: StatefulBuilder(
             builder: (context, setState) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.only(top: 24, bottom: 16),
                 child: Column(
                   mainAxisSize: MainAxisSize
                       .min, // To make the dialog as big as its children
@@ -404,7 +404,9 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                             alignment: Alignment.center,
                             child: Text(
                               date.day.toString(),
-                              style: const TextStyle(color: Colors.blue),
+                              style: AppTextStyles.calendarDateText.copyWith(
+                                color: AppColors.primaryColor,
+                              ),
                             ),
                           ),
                           // Selected date style
@@ -417,7 +419,7 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                             alignment: Alignment.center,
                             child: Text(
                               date.day.toString(),
-                              style: const TextStyle(
+                              style: AppTextStyles.calendarDateText.copyWith(
                                 color: Colors.white,
                               ),
                             ),
@@ -464,58 +466,52 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Image.asset(AppAssets.eventIcon),
-                          const SizedBox(
-                            width: 6,
-                          ),
+                          const SizedBox(width: 6),
                           Text(
                             DateFormat('dd MMM yyyy').format(selectedDate),
                             style: AppTextStyles.selectedDateTextStyle,
                           ),
-                          Expanded(
-                            child: SizedBox(
-                              width: 73,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).secondaryHeaderColor,
-                                  foregroundColor: AppColors.onSecondaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(
-                                    fontFamily: 'Roboto',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 20 / 14,
-                                  ),
+                          const Spacer(),
+                          SizedBox(
+                            width: 73,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).secondaryHeaderColor,
+                                foregroundColor: AppColors.onSecondaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 20 / 14,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: SizedBox(
-                              width: 73,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                  foregroundColor: AppColors.onPrimaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'Save',
-                                  style: TextStyle(
-                                    fontFamily: 'Roboto',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 20 / 14,
-                                  ),
+                          const SizedBox(width: 16),
+                          SizedBox(
+                            width: 73,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor: AppColors.onPrimaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Save',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 20 / 14,
                                 ),
                               ),
                             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ninja_coder_employee_demo/core/app_text_styles.dart';
 
+import '../../../../core/app_assets.dart';
+
 class EmpListItem extends StatelessWidget {
   final String itemKey;
   final String title;
@@ -24,9 +26,9 @@ class EmpListItem extends StatelessWidget {
       background: Container(
         color: Colors.red,
         alignment: Alignment.centerRight,
-        child: const Padding(
-          padding: EdgeInsets.only(right: 20.0),
-          child: Icon(Icons.delete, color: Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Image.asset(AppAssets.deleteIcon),
         ),
       ),
       direction: DismissDirection.endToStart,
