@@ -1,16 +1,39 @@
-# ninja_coder_employee_demo
+# Employee CRUD Operation Demo by kishansinh.com
 
-A new Flutter project.
+This is a Flutter project demonstrating CRUD operations on employee data. The data and domain layers of this project are developed using Test-Driven Development (TDD).
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To clone and run this application, you'll need [Git](https://git-scm.com) and [Flutter](https://flutter.dev/docs/get-started/install) installed on your computer. From your command line:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+# Clone this repository
+$ git clone https://github.com/imkishansinh/ninja_coder_employee_demo.git
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Go into the repository
+$ cd your_project_name
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Install dependencies
+$ flutter pub get
+
+# Run the app
+$ flutter run
+
+```
+
+## Flutter version details
+
+```bash
+Flutter 3.13.1 • channel stable • <https://github.com/flutter/flutter.git>
+Framework • revision e1e47221e8 (5 months ago) • 2023-08-22 21:43:18 -0700
+Engine • revision b20183e040
+Tools • Dart 3.1.0 • DevTools 2.25.0
+
+```
+
+## Contact Information 📧
+
+For any queries or discussions, feel free to reach out to me on:
+
+- [Twitter](https://x.com/imkishansinh)
+- [LinkedIn](https://www.linkedin.com/in/kishansinhparmar/)
