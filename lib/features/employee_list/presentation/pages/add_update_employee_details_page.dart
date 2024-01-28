@@ -15,6 +15,8 @@ import '../../../../core/app_constacts.dart';
 
 enum PageOperation { add, update }
 
+/// Arguments class for the AddUpdateEmployeeDetailsPage.
+/// This class is used to pass data to the page when navigating to it.
 class AddUpdatePageArguments {
   final PageOperation pageOperation;
   final EmployeeDisplay? employee;
@@ -48,19 +50,16 @@ class AddUpdateEmpDetailsPage extends StatefulWidget {
 }
 
 class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
+  // Form key and controllers
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _nameController = TextEditingController();
-
   final TextEditingController _roleController = TextEditingController();
-
   final TextEditingController _joiningDateController =
       TextEditingController(text: 'Today');
-
   final TextEditingController _leavingDateController = TextEditingController();
 
+  // Joining and leaving popup calendar variables
   DateTime joiningDate = DateTime.now();
-
   DateTime leavingDate = DateTime.now();
 
   @override
@@ -108,6 +107,7 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
             ),
         ],
       ),
+      // Cancel and save button in bottom navigation bar
       bottomNavigationBar: Builder(builder: (context) {
         final keyboardPadding = MediaQuery.of(context).viewInsets.bottom;
 
@@ -528,7 +528,6 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                             ),
                           ),
                         ),
-
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 10, 16),
                         focusedDay: focusedDate,
@@ -779,7 +778,6 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                             ),
                           ),
                         ),
-
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 10, 16),
                         focusedDay: focusedDate,

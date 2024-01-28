@@ -10,6 +10,7 @@ import '../../domain/usecases/crud_usecases.dart';
 part 'employee_list_state.dart';
 
 class EmployeeListCubit extends Cubit<EmployeeListState> {
+  // use cases
   final GetEmployees getEmployees = GetIt.I<GetEmployees>();
   final GetActiveEmployees getActiveEmployees = GetIt.I<GetActiveEmployees>();
   final GetFormerEmployees getFormerEmployees = GetIt.I<GetFormerEmployees>();
@@ -19,6 +20,10 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
 
   EmployeeListCubit() : super(EmployeeListInitial());
 
+  /// Loads the list of employees asynchronously.
+  /// Emits [EmployeeListLoading] state before loading the employees.
+  /// If the loading is successful, emits [EmployeeListLoaded] state with the active and former employees.
+  /// If an error occurs during loading, emits [EmployeeListError] state with the error message.
   Future<void> loadEmployees() async {
     emit(EmployeeListLoading());
     try {
@@ -34,39 +39,14 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
     }
   }
 
-  // Future<void> loadActiveEmployees() async {
-  //   emit(EmployeeListLoading());
-  //   try {
-  //     final employees = await getActiveEmployees();
-  //     final employeesDisplay =
-  //         employees.map((e) => EmployeeDisplay.fromEmployee(e)).toList();
-  //     emit(EmployeeListLoaded(employeesDisplay));
-  //   } catch (e) {
-  //     emit(EmployeeListError(e.toString()));
-  //   }
-  // }
-
-  // Future<void> loadFormerEmployees() async {
-  //   emit(EmployeeListLoading());
-  //   try {
-  //     final employees = await getFormerEmployees();
-  //     final employeesDisplay =
-  //         employees.map((e) => EmployeeDisplay.fromEmployee(e)).toList();
-  //     emit(EmployeeListLoaded(employeesDisplay));
-  //   } catch (e) {
-  //     emit(EmployeeListError(e.toString()));
-  //   }
-  // }
-
-  // Future<void> insertEmpl(Employee employee) async {
-  //   try {
-  //     await insertEmployee(employee);
-  //     loadEmployees();
-  //   } catch (e) {
-  //     emit(EmployeeListError(e.toString()));
-  //   }
-  // }
-
+  /// Adds a new employee to the employee list.
+  ///
+  /// The [newEmployee] parameter represents the employee to be added.
+  /// This method inserts the employee into the database and updates the state of the employee list.
+  /// If the employee's leaving date is null, the employee is added to the active employees list.
+  /// Otherwise, the employee is added to the former employees list.
+  ///
+  /// Throws an exception if there is an error inserting the employee into the database.
   Future<void> addEmployee(Employee newEmployee) async {
     int empId = await _insertEmployee(newEmployee);
     newEmployee.setId(empId);
@@ -86,6 +66,15 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
     }
   }
 
+  /// Updates the given [employee].
+  ///
+  /// The method first calls the private method `_updateEmployee` to perform the actual update operation.
+  /// If the state of the cubit is [EmployeeListLoaded], it updates the lists of active and former employees
+  /// based on the updated employee's leaving date. If the employee's leaving date is null, it updates the
+  /// active employees list, otherwise it updates the former employees list. The updated lists are then used
+  /// to emit a new [EmployeeListLoaded] state.
+  ///
+  /// If an error occurs during the update, the cubit emits an [EmployeeListError] state with the error message.
   Future<void> updateEmpl(Employee employee) async {
     try {
       await _updateEmployee(employee);
@@ -130,11 +119,26 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
     }
   }
 
+  // The following fields are used to implement the undo delete feature.
   EmployeeDisplay? _lastDeletedEmployee;
   Future<void>? _deleteFuture;
   bool _shouldDelete = true;
   int _lastDeletedEmployeeIndex = -1;
 
+  /// Deletes an employee with the specified [id].
+  /// If the employee is found in the active employees list, it is removed from there.
+  /// If the employee is not found in the active employees list, it is searched in the former employees list and removed from there.
+  /// After deleting the employee, the updated active employees and former employees lists are emitted.
+  /// If the delete operation is not canceled within a certain duration, the employee is permanently deleted.
+  ///
+  /// Parameters:
+  /// - [id]: The id of the employee to delete.
+  ///
+  /// Throws:
+  /// - [Exception]: If an error occurs while deleting the employee.
+  ///
+  /// Returns:
+  /// - [void]
   Future<void> deleteEmpl(int id) async {
     if (state is EmployeeListLoaded) {
       final currentState = state as EmployeeListLoaded;
@@ -175,6 +179,9 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
     }
   }
 
+  /// Undoes the delete operation by adding the last deleted employee back to the state.
+  /// If there is no last deleted employee, this method does nothing.
+  /// Sets the [_shouldDelete] flag to false.
   Future<void> undoDelete() async {
     if (_lastDeletedEmployee != null) {
       _shouldDelete = false;
@@ -183,6 +190,14 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
     }
   }
 
+  /// Adds an [Employee] to the current state of the employee list.
+  ///
+  /// If the current state is [EmployeeListLoaded], the method inserts the new employee
+  /// into the appropriate list based on their leaving date. If the leaving date is null,
+  /// the employee is added to the list of active employees. Otherwise, the employee is
+  /// added to the list of former employees.
+  ///
+  /// The [employee] parameter represents the employee to be added to the state.
   void addEmployeeToState(Employee employee) {
     if (state is EmployeeListLoaded) {
       final currentState = state as EmployeeListLoaded;
