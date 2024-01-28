@@ -31,6 +31,14 @@ Tools • Dart 3.1.0 • DevTools 2.25.0
 
 ```
 
+## Download APK
+
+You can download the APK file for this application from the following link:
+
+[Download APK](https://github.com/imkishansinh/ninja_coder_employee_demo/blob/master/apk_files/app-release-kishansinh.apk)
+
+After downloading the APK, you can install it on your Android device to test the application.
+
 ## Contact Information 📧
 
 For any queries or discussions, feel free to reach out to me on:
