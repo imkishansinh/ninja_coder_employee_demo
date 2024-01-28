@@ -33,7 +33,7 @@ class EmployeeDatasource {
 
   void populateDb(Database database, int version) async {
     await database.execute("CREATE TABLE Employee("
-        "id INTEGER PRIMARY KEY,"
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "name TEXT,"
         "role TEXT,"
         "joiningDate TEXT,"
@@ -42,7 +42,7 @@ class EmployeeDatasource {
 
   Future<int> insertEmployee(Employee employee) async {
     final db = await database;
-    var result = await db.insert('Employee', employee.toMap());
+    var result = await db.insert('Employee', employee.toMap(ignore: ['id']));
     return result;
   }
 

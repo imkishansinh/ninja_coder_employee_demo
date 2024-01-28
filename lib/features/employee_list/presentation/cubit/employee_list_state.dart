@@ -12,12 +12,13 @@ class EmployeeListInitial extends EmployeeListState {}
 class EmployeeListLoading extends EmployeeListState {}
 
 class EmployeeListLoaded extends EmployeeListState {
-  final List<EmployeeDisplay> employees;
+  final List<EmployeeDisplay> activeEmployees;
+  final List<EmployeeDisplay> formerEmployees;
 
-  const EmployeeListLoaded(this.employees);
+  const EmployeeListLoaded(this.activeEmployees, this.formerEmployees);
 
   @override
-  List<Object> get props => [employees];
+  List<Object> get props => [activeEmployees, formerEmployees];
 }
 
 class EmployeeListError extends EmployeeListState {

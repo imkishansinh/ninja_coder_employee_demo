@@ -11,6 +11,8 @@ class AppTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final TextCapitalization textCapitalization;
   final TextInputType? textInputType;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
   final String? regex;
   final Widget prefixIcon;
   final Widget? suffixIcon;
@@ -24,6 +26,8 @@ class AppTextField extends StatelessWidget {
     this.textInputType,
     this.regex,
     this.suffixIcon,
+    this.textStyle,
+    this.hintStyle,
     required this.prefixIcon,
     super.key,
   }) : super();
@@ -43,13 +47,14 @@ class AppTextField extends StatelessWidget {
               ),
             ]
           : null,
-      style: AppTextStyles.textField,
+      style: textStyle ?? AppTextStyles.textField,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
         hintText: hintText,
-        hintStyle: AppTextStyles.textField.copyWith(
-          color: AppColors.textFieldHintColor,
-        ),
+        hintStyle: hintStyle ??
+            AppTextStyles.textField.copyWith(
+              color: AppColors.textFieldHintColor,
+            ),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(

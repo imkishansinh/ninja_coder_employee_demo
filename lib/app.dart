@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         HomePage.routeName: (context) => const HomePage(),
-        AddUpdateEmpDetailsPage.routeName: (context) =>
-            const AddUpdateEmpDetailsPage(),
+        AddUpdateEmpDetailsParent.routeName: (context) =>
+            const AddUpdateEmpDetailsParent(),
       },
       theme: ThemeData(
         colorScheme: const ColorScheme(

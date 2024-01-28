@@ -1,9 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ninja_coder_employee_demo/core/app_assets.dart';
 import 'package:ninja_coder_employee_demo/core/app_colors.dart';
+import 'package:ninja_coder_employee_demo/core/app_constacts.dart';
 import 'package:ninja_coder_employee_demo/core/app_text_styles.dart';
+import 'package:ninja_coder_employee_demo/features/employee_list/domain/entities/employee_display.dart';
 import 'package:ninja_coder_employee_demo/features/employee_list/presentation/pages/add_update_employee_details_page.dart';
 
+import '../cubit/employee_list_cubit.dart';
 import '../widgets/emp_list_item.dart';
 import '../widgets/emp_list_item_header.dart';
 
@@ -14,14 +20,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> currentEmployees = [];
-
-    List<Map<String, dynamic>> previousEmployees = [];
-
-    int itemCount = currentEmployees.length +
-        previousEmployees.length +
-        (currentEmployees.isEmpty ? 0 : 1) +
-        (previousEmployees.isEmpty ? 0 : 1); // Add 1 for each non-empty list
+    BlocProvider.of<EmployeeListCubit>(context).loadEmployees();
 
     return Scaffold(
       backgroundColor: AppColors.dividerColor,
@@ -41,7 +40,9 @@ class HomePage extends StatelessWidget {
           foregroundColor: AppColors.onPrimaryColor,
           onPressed: () {
             Navigator.of(context).pushNamed(
-              AddUpdateEmpDetailsPage.routeName,
+              AddUpdateEmpDetailsParent.routeName,
+              arguments:
+                  AddUpdatePageArguments(pageOperation: PageOperation.add),
             );
           },
           shape: const RoundedRectangleBorder(
@@ -55,11 +56,23 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: currentEmployees.isEmpty && previousEmployees.isEmpty
-          ? Center(
-              child: Image.asset(AppAssets.noEmpState),
-            )
-          : Stack(
+      body: BlocBuilder<EmployeeListCubit, EmployeeListState>(
+        bloc: BlocProvider.of<EmployeeListCubit>(context),
+        builder: (context, state) {
+          if (state is EmployeeListLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is EmployeeListLoaded) {
+            final currentEmployees = state.activeEmployees;
+            final previousEmployees = state.formerEmployees;
+            if (currentEmployees.isEmpty && previousEmployees.isEmpty) {
+              return Center(child: Image.asset(AppAssets.noEmpState));
+            }
+
+            int itemCount = currentEmployees.length +
+                previousEmployees.length +
+                (currentEmployees.isEmpty ? 0 : 1) +
+                (previousEmployees.isEmpty ? 0 : 1);
+            return Stack(
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 48),
@@ -75,17 +88,20 @@ class HomePage extends StatelessWidget {
                         return const EmpListItemHeader('Current Employees');
                       } else if (index <= currentEmployees.length &&
                           currentEmployees.isNotEmpty) {
-                        return buildEmployeeItem(currentEmployees[index - 1]);
+                        return buildEmployeeItem(
+                            currentEmployees[index - 1], context);
                       } else if (index ==
                               currentEmployees.length +
                                   (currentEmployees.isNotEmpty ? 1 : 0) &&
                           previousEmployees.isNotEmpty) {
                         return const EmpListItemHeader('Previously Employees');
                       } else {
-                        return buildEmployeeItem(previousEmployees[index -
-                            currentEmployees.length -
-                            (currentEmployees.isNotEmpty ? 1 : 0) -
-                            (previousEmployees.isNotEmpty ? 1 : 0)]);
+                        return buildEmployeeItem(
+                            previousEmployees[index -
+                                currentEmployees.length -
+                                (currentEmployees.isNotEmpty ? 1 : 0) -
+                                (previousEmployees.isNotEmpty ? 1 : 0)],
+                            context);
                       }
                     },
                   ),
@@ -107,17 +123,42 @@ class HomePage extends StatelessWidget {
                   ),
                 )
               ],
-            ),
+            );
+          } else if (state is EmployeeListError) {
+            return Text('Error: ${state.message}');
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 
-  Widget buildEmployeeItem(Map<String, dynamic> previousEmploye) {
+  Widget buildEmployeeItem(EmployeeDisplay employee, BuildContext context) {
     return EmpListItem(
-      title: previousEmploye['name'],
-      subTitle: previousEmploye['role'],
-      desc: 'desc',
-      itemKey: '${previousEmploye['id']}',
-      onDismissed: (p0) {},
+      title: employee.name,
+      subTitle: employee.role,
+      desc:
+          '${employee.joiningDate} ${employee.leavingDate == null ? '' : ' - ${employee.leavingDate}'}',
+      itemKey: '${employee.id}',
+      onDismissed: (p0) {
+        final employeeListCubit = BlocProvider.of<EmployeeListCubit>(context);
+        employeeListCubit.deleteEmpl(employee.id);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Employee data has been deleted'),
+            duration: const Duration(
+                seconds: AppConstants.hideUndoOptionAfterSeconds),
+            action: SnackBarAction(
+              label: 'UNDO',
+              onPressed: () {
+                employeeListCubit.undoDelete();
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
