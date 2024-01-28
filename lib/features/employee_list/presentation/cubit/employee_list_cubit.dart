@@ -97,16 +97,29 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
         List<EmployeeDisplay> updatedFormerEmployees;
 
         if (employee.leavingDate == null) {
-          updatedActiveEmployees = currentState.activeEmployees.map((e) {
-            return e.id == employee.id ? updatedEmployeeDisplay : e;
-          }).toList();
-          updatedFormerEmployees = currentState.formerEmployees;
+          updatedFormerEmployees = currentState.formerEmployees
+              .where((e) => e.id != employee.id)
+              .toList();
+          if (!currentState.activeEmployees.any((e) => e.id == employee.id)) {
+            updatedActiveEmployees = List.from(currentState.activeEmployees)
+              ..add(updatedEmployeeDisplay);
+          } else {
+            updatedActiveEmployees = currentState.activeEmployees.map((e) {
+              return e.id == employee.id ? updatedEmployeeDisplay : e;
+            }).toList();
+          }
         } else {
           updatedActiveEmployees = currentState.activeEmployees
               .where((e) => e.id != employee.id)
               .toList();
-          updatedFormerEmployees = List.from(currentState.formerEmployees)
-            ..add(updatedEmployeeDisplay);
+          if (!currentState.formerEmployees.any((e) => e.id == employee.id)) {
+            updatedFormerEmployees = List.from(currentState.formerEmployees)
+              ..add(updatedEmployeeDisplay);
+          } else {
+            updatedFormerEmployees = currentState.formerEmployees.map((e) {
+              return e.id == employee.id ? updatedEmployeeDisplay : e;
+            }).toList();
+          }
         }
 
         emit(

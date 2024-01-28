@@ -6,5 +6,5 @@ class AppConstants {
     'Product Owner',
   ];
 
-  static const int hideUndoOptionAfterSeconds = 3;
+  static const int hideUndoOptionAfterSeconds = 2;
 }

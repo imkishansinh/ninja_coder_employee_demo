@@ -160,6 +160,7 @@ class HomePage extends StatelessWidget {
                   seconds: AppConstants.hideUndoOptionAfterSeconds),
               action: SnackBarAction(
                 label: 'UNDO',
+                textColor: AppColors.primaryColor,
                 onPressed: () {
                   employeeListCubit.undoDelete();
                 },

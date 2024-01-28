@@ -37,33 +37,51 @@ class AddUpdateEmpDetailsParent extends StatelessWidget {
   }
 }
 
-class AddUpdateEmpDetailsPage extends StatelessWidget {
+class AddUpdateEmpDetailsPage extends StatefulWidget {
   final AddUpdatePageArguments args;
-
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
-  final TextEditingController _joiningDateController =
-      TextEditingController(text: 'Today');
-  final TextEditingController _leavingDateController = TextEditingController();
-  DateTime joiningDate = DateTime.now();
-  DateTime leavingDate = DateTime.now();
 
   AddUpdateEmpDetailsPage(this.args, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    if (args.pageOperation == PageOperation.update) {
-      _nameController.text = args.employee!.name;
-      _roleController.text = args.employee!.role;
-      _joiningDateController.text = args.employee!.joiningDate;
-      joiningDate = DateFormat("dd MMM yyyy").parse(args.employee!.joiningDate);
-      if (args.employee!.leavingDate != null) {
-        _leavingDateController.text = args.employee!.leavingDate!;
+  State<AddUpdateEmpDetailsPage> createState() =>
+      _AddUpdateEmpDetailsPageState();
+}
+
+class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _roleController = TextEditingController();
+
+  final TextEditingController _joiningDateController =
+      TextEditingController(text: 'Today');
+
+  final TextEditingController _leavingDateController = TextEditingController();
+
+  DateTime joiningDate = DateTime.now();
+
+  DateTime leavingDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.args.pageOperation == PageOperation.update) {
+      _nameController.text = widget.args.employee!.name;
+      _roleController.text = widget.args.employee!.role;
+      _joiningDateController.text = widget.args.employee!.joiningDate;
+      joiningDate =
+          DateFormat("dd MMM yyyy").parse(widget.args.employee!.joiningDate);
+      if (widget.args.employee!.leavingDate != null) {
+        _leavingDateController.text = widget.args.employee!.leavingDate!;
         leavingDate =
-            DateFormat("dd MMM yyyy").parse(args.employee!.leavingDate!);
+            DateFormat("dd MMM yyyy").parse(widget.args.employee!.leavingDate!);
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -71,17 +89,17 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
         leading: const SizedBox.shrink(),
         leadingWidth: 0,
         title: Text(
-          args.pageOperation == PageOperation.add
+          widget.args.pageOperation == PageOperation.add
               ? 'Add Employee Details'
               : 'Edit Employee Details',
           style: AppTextStyles.appBarTextStyle,
         ),
         actions: [
-          if (args.pageOperation == PageOperation.update)
+          if (widget.args.pageOperation == PageOperation.update)
             IconButton(
               onPressed: () {
                 BlocProvider.of<EmployeeListCubit>(context)
-                    .deleteEmpl(args.employee!.id)
+                    .deleteEmpl(widget.args.employee!.id)
                     .then((value) {
                   Navigator.of(context).pop();
                 });
@@ -187,7 +205,7 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                   // Employee role
                   GestureDetector(
                     onTap: () async {
-                      String role = await showModalBottomSheet(
+                      String? role = await showModalBottomSheet(
                         context: context,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -228,7 +246,9 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                         },
                       );
 
-                      _roleController.text = role;
+                      if (role != null) {
+                        _roleController.text = role;
+                      }
                     },
                     child: SizedBox(
                       height: 40,
@@ -303,10 +323,10 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
 
   // Define a function to show the calendar popup
   void selectJoiningDate(BuildContext context) {
-    DateTime selectedDate = args.pageOperation == PageOperation.update
+    DateTime selectedDate = widget.args.pageOperation == PageOperation.update
         ? joiningDate
         : DateTime.now();
-    DateTime focusedDate = args.pageOperation == PageOperation.update
+    DateTime focusedDate = widget.args.pageOperation == PageOperation.update
         ? joiningDate
         : DateTime.now();
 
@@ -355,6 +375,11 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                                       onPressed: () {
                                         setState(() {
                                           selectedDate = DateTime.now();
+                                          selectedDate = DateTime(
+                                            selectedDate.year,
+                                            selectedDate.month,
+                                            selectedDate.day,
+                                          );
                                         });
                                       },
                                       child: const Text(
@@ -616,10 +641,10 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
 
   // Define a function to show the calendar popup
   void selectLeavingDate(BuildContext context) {
-    DateTime selectedDate = args.pageOperation == PageOperation.update
+    DateTime selectedDate = widget.args.pageOperation == PageOperation.update
         ? leavingDate
         : DateTime.now();
-    DateTime focusedDate = args.pageOperation == PageOperation.update
+    DateTime focusedDate = widget.args.pageOperation == PageOperation.update
         ? leavingDate
         : DateTime.now();
 
@@ -692,6 +717,11 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                                       onPressed: () {
                                         setState(() {
                                           selectedDate = DateTime.now();
+                                          selectedDate = DateTime(
+                                            selectedDate.year,
+                                            selectedDate.month,
+                                            selectedDate.day,
+                                          );
                                           _leavingDateController.text =
                                               DateFormat('dd MMM yyyy')
                                                   .format(selectedDate);
@@ -868,21 +898,24 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
   // Define a function to get the next Monday
   DateTime getNextMonday() {
     DateTime now = DateTime.now();
-    return now.add(Duration(
+    DateTime temp = now.add(Duration(
         days: (DateTime.daysPerWeek - now.weekday + 1) % DateTime.daysPerWeek));
+    return DateTime(temp.year, temp.month, temp.day);
   }
 
   // Define a function to get the next Tuesday
   DateTime getNextTuesday() {
     DateTime now = DateTime.now();
-    return now.add(Duration(
+    DateTime temp = now.add(Duration(
         days: (DateTime.daysPerWeek - now.weekday + 2) % DateTime.daysPerWeek));
+    return DateTime(temp.year, temp.month, temp.day);
   }
 
   // Define a function to get the date one week from now
   DateTime getNextWeek() {
     DateTime now = DateTime.now();
-    return now.add(const Duration(days: 7));
+    DateTime temp = now.add(const Duration(days: 7));
+    return DateTime(temp.year, temp.month, temp.day);
   }
 
   // Define a function to save the employee details
@@ -898,6 +931,17 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select emplyee role'),
+        ),
+      );
+      return;
+    } else if (_leavingDateController.text.toString().toLowerCase() !=
+            'No date'.toLowerCase() &&
+        _leavingDateController.text.isNotEmpty &&
+        leavingDate.isBefore(joiningDate)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Leaving date should be greater or equal to joining date'),
         ),
       );
       return;
@@ -917,8 +961,8 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
             : leavingDate,
       );
 
-      if (args.pageOperation == PageOperation.update) {
-        employee.id = args.employee!.id;
+      if (widget.args.pageOperation == PageOperation.update) {
+        employee.id = widget.args.employee!.id;
         BlocProvider.of<EmployeeListCubit>(context)
             .updateEmpl(employee)
             .then((value) {
