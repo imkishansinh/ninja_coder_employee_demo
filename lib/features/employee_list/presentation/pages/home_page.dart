@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ninja_coder_employee_demo/core/app_assets.dart';
@@ -135,30 +133,41 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildEmployeeItem(EmployeeDisplay employee, BuildContext context) {
-    return EmpListItem(
-      title: employee.name,
-      subTitle: employee.role,
-      desc:
-          '${employee.joiningDate} ${employee.leavingDate == null ? '' : ' - ${employee.leavingDate}'}',
-      itemKey: '${employee.id}',
-      onDismissed: (p0) {
-        final employeeListCubit = BlocProvider.of<EmployeeListCubit>(context);
-        employeeListCubit.deleteEmpl(employee.id);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Employee data has been deleted'),
-            duration: const Duration(
-                seconds: AppConstants.hideUndoOptionAfterSeconds),
-            action: SnackBarAction(
-              label: 'UNDO',
-              onPressed: () {
-                employeeListCubit.undoDelete();
-              },
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          AddUpdateEmpDetailsParent.routeName,
+          arguments: AddUpdatePageArguments(
+            pageOperation: PageOperation.update,
+            employee: employee,
           ),
         );
       },
+      child: EmpListItem(
+        title: employee.name,
+        subTitle: employee.role,
+        desc:
+            '${employee.leavingDate == null ? 'From ${employee.joiningDate}' : employee.joiningDate} ${employee.leavingDate == null ? '' : ' - ${employee.leavingDate}'}',
+        itemKey: '${employee.id}',
+        onDismissed: (p0) {
+          final employeeListCubit = BlocProvider.of<EmployeeListCubit>(context);
+          employeeListCubit.deleteEmpl(employee.id);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Employee data has been deleted'),
+              duration: const Duration(
+                  seconds: AppConstants.hideUndoOptionAfterSeconds),
+              action: SnackBarAction(
+                label: 'UNDO',
+                onPressed: () {
+                  employeeListCubit.undoDelete();
+                },
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -52,7 +52,7 @@ class Employee extends Equatable {
   }
 
   factory Employee.fromEmployeeDisplay(EmployeeDisplay employeeDisplay) {
-    final dateFormat = DateFormat('dd MMM, yyyy');
+    final dateFormat = DateFormat('dd MMM yyyy');
     return Employee(
       id: employeeDisplay.id,
       name: employeeDisplay.name,

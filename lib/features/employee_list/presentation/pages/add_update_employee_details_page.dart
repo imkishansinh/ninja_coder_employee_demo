@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:ninja_coder_employee_demo/core/app_assets.dart';
 import 'package:ninja_coder_employee_demo/core/app_text_styles.dart';
 import 'package:ninja_coder_employee_demo/features/employee_list/data/models/employee.dart';
+import 'package:ninja_coder_employee_demo/features/employee_list/domain/entities/employee_display.dart';
 import 'package:ninja_coder_employee_demo/features/employee_list/presentation/cubit/employee_list_cubit.dart';
 import 'package:ninja_coder_employee_demo/features/employee_list/presentation/widgets/app_text_field.dart';
 
@@ -16,11 +17,11 @@ enum PageOperation { add, update }
 
 class AddUpdatePageArguments {
   final PageOperation pageOperation;
-  // final Map<String, dynamic> employeeDetails;
+  final EmployeeDisplay? employee;
 
   AddUpdatePageArguments({
     required this.pageOperation,
-    // this.employeeDetails,
+    this.employee,
   });
 }
 
@@ -52,6 +53,17 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (args.pageOperation == PageOperation.update) {
+      _nameController.text = args.employee!.name;
+      _roleController.text = args.employee!.role;
+      _joiningDateController.text = args.employee!.joiningDate;
+      joiningDate = DateFormat("dd MMM yyyy").parse(args.employee!.joiningDate);
+      if (args.employee!.leavingDate != null) {
+        _leavingDateController.text = args.employee!.leavingDate!;
+        leavingDate =
+            DateFormat("dd MMM yyyy").parse(args.employee!.leavingDate!);
+      }
+    }
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -67,7 +79,13 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
         actions: [
           if (args.pageOperation == PageOperation.update)
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                BlocProvider.of<EmployeeListCubit>(context)
+                    .deleteEmpl(args.employee!.id)
+                    .then((value) {
+                  Navigator.of(context).pop();
+                });
+              },
               icon: Image.asset(AppAssets.deleteIcon),
             ),
         ],
@@ -102,7 +120,7 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                       ),
                       onPressed: () {
                         FocusScopeNode currentFocus = FocusScope.of(context);
-                        if (currentFocus.hasFocus) {
+                        if (MediaQuery.of(context).viewInsets.bottom != 0) {
                           currentFocus.unfocus();
                         } else {
                           Navigator.of(context).pop();
@@ -285,8 +303,12 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
 
   // Define a function to show the calendar popup
   void selectJoiningDate(BuildContext context) {
-    DateTime selectedDate = DateTime.now();
-    DateTime focusedDate = DateTime.now();
+    DateTime selectedDate = args.pageOperation == PageOperation.update
+        ? joiningDate
+        : DateTime.now();
+    DateTime focusedDate = args.pageOperation == PageOperation.update
+        ? joiningDate
+        : DateTime.now();
 
     showDialog(
       context: context,
@@ -509,7 +531,7 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
                           // }
                           setState(() {
                             selectedDate = selectedDay;
-                            focusedDate = focusedDay; // Add this line
+                            focusedDate = focusedDay;
                           });
                         },
                       ),
@@ -594,8 +616,12 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
 
   // Define a function to show the calendar popup
   void selectLeavingDate(BuildContext context) {
-    DateTime selectedDate = DateTime.now();
-    DateTime focusedDate = DateTime.now();
+    DateTime selectedDate = args.pageOperation == PageOperation.update
+        ? leavingDate
+        : DateTime.now();
+    DateTime focusedDate = args.pageOperation == PageOperation.update
+        ? leavingDate
+        : DateTime.now();
 
     showDialog(
       context: context,
@@ -891,11 +917,20 @@ class AddUpdateEmpDetailsPage extends StatelessWidget {
             : leavingDate,
       );
 
-      BlocProvider.of<EmployeeListCubit>(context)
-          .addEmployee(employee)
-          .then((value) {
-        Navigator.of(context).pop();
-      });
+      if (args.pageOperation == PageOperation.update) {
+        employee.id = args.employee!.id;
+        BlocProvider.of<EmployeeListCubit>(context)
+            .updateEmpl(employee)
+            .then((value) {
+          Navigator.of(context).pop();
+        });
+      } else {
+        BlocProvider.of<EmployeeListCubit>(context)
+            .addEmployee(employee)
+            .then((value) {
+          Navigator.of(context).pop();
+        });
+      }
     }
   }
 }

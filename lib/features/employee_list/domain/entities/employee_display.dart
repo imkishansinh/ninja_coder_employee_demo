@@ -18,7 +18,7 @@ class EmployeeDisplay {
   });
 
   static EmployeeDisplay fromEmployee(Employee employee) {
-    final dateFormat = DateFormat('dd MMM, yyyy');
+    final dateFormat = DateFormat('dd MMM yyyy');
     return EmployeeDisplay(
       id: employee.id,
       name: employee.name,
