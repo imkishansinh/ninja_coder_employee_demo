@@ -343,8 +343,7 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
               return Padding(
                 padding: const EdgeInsets.only(top: 24, bottom: 16),
                 child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // To make the dialog as big as its children
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Custom 4 actions
                     Padding(
@@ -401,11 +400,9 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                                       ),
                                       onPressed: () {
                                         DateTime nextMonday = getNextMonday();
-                                        // if (nextMonday.isAfter(DateTime.now())) {
                                         setState(() {
                                           selectedDate = nextMonday;
                                         });
-                                        // }
                                       },
                                       child: const Text(
                                         'Next Monday',
@@ -533,8 +530,6 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                         ),
 
                         firstDay: DateTime.utc(2010, 10, 16),
-                        // lastDay: DateTime
-                        //     .now(), // Set the last day to the current date
                         lastDay: DateTime.utc(2030, 10, 16),
                         focusedDay: focusedDate,
                         // Left right chevron icons with current month name
@@ -550,13 +545,11 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                           rightChevronMargin: const EdgeInsets.only(right: 32),
                         ),
                         onDaySelected: (selectedDay, focusedDay) {
-                          // if (selectedDay.isAfter(DateTime.now())) {
-                          //   // Do not allow the selection of a future date
-                          //   return;
-                          // }
                           setState(() {
-                            selectedDate = selectedDay;
-                            focusedDate = focusedDay;
+                            selectedDate = DateTime(selectedDay.year,
+                                selectedDay.month, selectedDay.day);
+                            focusedDate = DateTime(focusedDay.year,
+                                focusedDay.month, focusedDay.day);
                           });
                         },
                       ),
@@ -661,8 +654,7 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
               return Padding(
                 padding: const EdgeInsets.only(top: 24, bottom: 16),
                 child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // To make the dialog as big as its children
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Custom 4 actions
                     Padding(
@@ -789,8 +781,6 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                         ),
 
                         firstDay: DateTime.utc(2010, 10, 16),
-                        // lastDay: DateTime
-                        //     .now(), // Set the last day to the current date
                         lastDay: DateTime.utc(2030, 10, 16),
                         focusedDay: focusedDate,
                         // Left right chevron icons with current month name
@@ -806,13 +796,11 @@ class _AddUpdateEmpDetailsPageState extends State<AddUpdateEmpDetailsPage> {
                           rightChevronMargin: const EdgeInsets.only(right: 32),
                         ),
                         onDaySelected: (selectedDay, focusedDay) {
-                          // if (selectedDay.isAfter(DateTime.now())) {
-                          //   // Do not allow the selection of a future date
-                          //   return;
-                          // }
                           setState(() {
-                            selectedDate = selectedDay;
-                            focusedDate = focusedDay; // Add this line
+                            selectedDate = DateTime(selectedDay.year,
+                                selectedDay.month, selectedDay.day);
+                            focusedDate = DateTime(focusedDay.year,
+                                focusedDay.month, focusedDay.day);
                           });
                         },
                       ),
